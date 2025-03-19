@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MedHCV{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm">
+        <div class="container mx-auto flex items-center justify-between py-4 px-6">
+            <!-- Logo -->
+            <a href="{{ url_for('index') }}" class="text-2xl font-bold text-gray-800 hover:text-green-600">
+                MedHCV<span class="text-green-600">+</span>
+            </a>
+
+            <!-- Links (desktop view) -->
+            <div class="hidden md:flex items-center space-x-6">
+                {% if current_user.is_authenticated %}
+                    <ul class="flex space-x-6">
+                        <li><a href="{{ url_for('index') }}" class="text-gray-800 hover:text-green-600 text-lg font-medium {% if request.endpoint == 'index' %} border-b-2 border-green-600 pb-1 {% endif %}">Home</a></li>
+                        <li><a href="{{ url_for('form') }}" class="text-gray-800 hover:text-green-600 text-lg font-medium {% if request.endpoint == 'form' %} border-b-2 border-green-600 pb-1 {% endif %}">Form</a></li>
+                        <li><a href="{{ url_for('riwayat') }}" class="text-gray-800 hover:text-green-600 text-lg font-medium {% if request.endpoint == 'riwayat' %} border-b-2 border-green-600 pb-1 {% endif %}">Riwayat</a></li>
+                        <li><a href="{{ url_for('train_upload') }}" class="text-gray-800 hover:text-green-600 text-lg font-medium {% if request.endpoint == 'train_upload' %} border-b-2 border-green-600 pb-1 {% endif %}">Train</a></li>
+                    </ul>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-blue-600 text-lg font-medium">{{ current_user.username }}</span>
+                        <form method="POST" action="{{ url_for('logout') }}">
+                            <button type="submit" class="text-red-600 hover:text-red-400 text-lg font-medium">Logout</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <ul class="flex space-x-6">
+                        <li><a href="{{ url_for('login') }}" class="text-gray-800 hover:text-green-600 text-lg font-medium {% if request.endpoint == 'login' %} border-b-2 border-green-600 pb-1 {% endif %}">Login</a></li>
+                        <li><a href="{{ url_for('register') }}" class="text-gray-800 hover:text-green-600 text-lg font-medium {% if request.endpoint == 'register' %} border-b-2 border-green-600 pb-1 {% endif %}">Register</a></li>
+                    </ul>
+                {% endif %}
+            </div>
+
+            <!-- Hamburger menu button -->
+            <button class="md:hidden text-gray-800 focus:outline-none" onclick="toggleMenu()" aria-controls="mobileMenu" aria-expanded="false">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile menu (hidden by default) -->
+        <div id="mobileMenu" class="hidden md:hidden bg-gray-100">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('index') }}" class="block py-2 px-6 text-gray-800 hover:bg-green-100 {% if request.endpoint == 'index' %} bg-green-100 {% endif %}">Home</a>
+                <a href="{{ url_for('form') }}" class="block py-2 px-6 text-gray-800 hover:bg-green-100 {% if request.endpoint == 'form' %} bg-green-100 {% endif %}">Form</a>
+                <a href="{{ url_for('riwayat') }}" class="block py-2 px-6 text-gray-800 hover:bg-green-100 {% if request.endpoint == 'riwayat' %} bg-green-100 {% endif %}">Riwayat</a>
+                <a href="{{ url_for('train_upload') }}" class="block py-2 px-6 text-gray-800 hover:bg-green-100 {% if request.endpoint == 'train_upload' %} bg-green-100 {% endif %}">Train</a>
+                <span class="block py-2 px-6 text-gray-600">{{ current_user.username }}</span>
+                <form method="POST" action="{{ url_for('logout') }}" class="block py-2 px-6">
+                    <button type="submit" class="text-red-600 hover:text-red-400 text-lg font-medium w-full text-left">Logout</button>
+                </form>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="block py-2 px-6 text-gray-800 hover:bg-green-100 {% if request.endpoint == 'login' %} bg-green-100 {% endif %}">Login</a>
+                <a href="{{ url_for('register') }}" class="block py-2 px-6 text-gray-800 hover:bg-green-100 {% if request.endpoint == 'register' %} bg-green-100 {% endif %}">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="relative">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 max-w-lg w-full">
+                    {% for category, message in messages %}
+                        <div class="p-4 mb-4 text-sm text-white rounded-lg shadow-lg
+                            {% if category == 'success' %}
+                                bg-green-500
+                            {% elif category == 'danger' %}
+                                bg-red-500
+                            {% elif category == 'info' %}
+                                bg-blue-500
+                            {% elif category == 'warning' %}
+                                bg-yellow-500
+                            {% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+    
+    
+    <!-- Main Content -->
+    <main class="flex-grow">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 py-6">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2024 HCVMed. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>

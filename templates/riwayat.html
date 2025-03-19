@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Detection History - MedHCV{% endblock %}
+
+{% block content %}
+<div class="container mx-auto mt-10 mb-12 px-24">
+    <div class="bg-white shadow-md rounded-lg border">
+        <div class="bg-blue-500 text-white rounded-t-lg p-6">
+            <h3 class="text-2xl font-semibold">Detection History</h3>
+        </div>
+        
+        <div class="p-6">
+            {% if history %}
+                {% if csv_available %}
+                    <div class="mb-6">
+                        <a href="{{ url_for('download_history') }}" 
+                           class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition">
+                            Download History (CSV)
+                        </a>
+                    </div>
+                {% endif %}
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="px-4 py-2 border">Date</th>
+                                <th class="px-4 py-2 border">Risk Score</th>
+                                <th class="px-4 py-2 border">Age</th>
+                                <th class="px-4 py-2 border">Sex</th>
+                                <th class="px-4 py-2 border">ALB</th>
+                                <th class="px-4 py-2 border">ALP</th>
+                                <th class="px-4 py-2 border">ALT</th>
+                                <th class="px-4 py-2 border">AST</th>
+                                <th class="px-4 py-2 border">BIL</th>
+                                <th class="px-4 py-2 border">CHE</th>
+                                <th class="px-4 py-2 border">CHOL</th>
+                                <th class="px-4 py-2 border">CREA</th>
+                                <th class="px-4 py-2 border">GGT</th>
+                                <th class="px-4 py-2 border">PROT</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in history %}
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-2 border">{{ record.detection_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                    <td class="px-4 py-2 border">{{ "%.2f"|format(record.risk_score) }}%</td>
+                                    <td class="px-4 py-2 border">{{ record.age }}</td>
+                                    <td class="px-4 py-2 border">{{ record.sex }}</td>
+                                    <td class="px-4 py-2 border">{{ "%.2f"|format(record.alb) }}</td>
+                                    <td class="px-4 py-2 border">{{ "%.2f"|format(record.alp) }}</td>
+                                    <td class="px-4 py-2 border">{{ "%.2f"|format(record.alt) }}</td>
+                                    <td class="px-4 py-2 border">{{ "%.2f"|format(record.ast) }}</td>
+                                    <td class="px-4 py-2 border">{{ "%.2f"|format(record.bil) }}</td>
+                                    <td class="px-4 py-2 border">{{ "%.2f"|format(record.che) }}</td>
+                                    <td class="px-4 py-2 border">{{ "%.2f"|format(record.chol) }}</td>
+                                    <td class="px-4 py-2 border">{{ "%.2f"|format(record.crea) }}</td>
+                                    <td class="px-4 py-2 border">{{ "%.2f"|format(record.ggt) }}</td>
+                                    <td class="px-4 py-2 border">{{ "%.2f"|format(record.prot) }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-8">
+                    <p class="text-gray-600">No detection history available.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

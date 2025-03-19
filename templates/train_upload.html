@@ -1,0 +1,564 @@
+
+{% extends "base.html" %}
+
+{% block title %}Train Model - MedHCV{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Train Model</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+      .step-inactive {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+      <!-- Step 1: Upload Dataset -->
+<!-- Step 1: Upload Dataset -->
+<div class="mb-8 bg-white rounded-lg shadow-md p-6">
+  <h2 class="text-2xl font-bold mb-4">Step 1: Upload Dataset</h2>
+  <form id="uploadForm" class="space-y-4">
+    <div class="flex items-center space-x-4">
+      <input
+        type="file"
+        name="dataset"
+        accept=".csv"
+        class="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+      />
+      <button
+        type="submit"
+        class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+      >
+        Upload
+      </button>
+      <!-- Process Data Split Button -->
+      <button
+        id="processDataSplit"
+        type="button"
+        class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition hidden"
+      >
+        Proceed to Split Data
+      </button>
+    </div>
+  </form>
+  <div id="dataTable" class="mt-4 overflow-x-auto hidden">
+    <table class="min-w-full divide-y divide-gray-200">
+      <!-- Table content dynamically populated -->
+    </table>
+  </div>
+</div>
+
+
+      <!-- Step 2: Split Data -->
+      <div
+        id="splitSection"
+        class="mb-8 bg-white rounded-lg shadow-md p-6 step-inactive"
+      >
+        <h2 class="text-2xl font-bold mb-4">Step 2: Split Data</h2>
+        <form id="splitForm" class="space-y-4">
+          <div class="flex items-center space-x-4">
+            <label class="block">
+              <span class="text-gray-700">Test Size (1-40%):</span>
+              <input
+                type="number"
+                name="test_size"
+                min="1"
+                max="40"
+                step="1"
+                value="20"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+              />
+            </label>
+            <button
+              type="submit"
+              class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+            >
+              Split Data
+            </button>
+          </div>
+        </form>
+        <div id="splitResults" class="mt-4 hidden">
+          <!-- Split results will be shown here -->
+        </div>
+      </div>
+
+<!-- Step 3: Class Balance Analysis -->
+<div
+id="smoteSection"
+class="mb-8 bg-white rounded-lg shadow-md p-6 step-inactive"
+>
+<h2 class="text-2xl font-bold mb-4">Step 3: Class Balance Analysis</h2>
+<div id="smoteResults" class="space-y-4">
+  <!-- SMOTE analysis results -->
+  <div class="bg-green-50 border-l-4 border-green-400 p-4">
+    <p class="text-green-700">
+      Class distribution and SMOTE results will be shown here.
+    </p>
+  </div>
+</div>
+<div id="classDistributionChart" class="mt-4">
+  <img src="/static/smote_distribution.png" alt="Class Distribution" class="mx-auto">
+</div>
+</div>
+
+      <!-- Step 4: Model Training -->
+      <div
+        id="trainingSection"
+        class="mb-8 bg-white rounded-lg shadow-md p-6 step-inactive"
+      >
+        <h2 class="text-2xl font-bold mb-4">Step 4: Optuna Optimization</h2>
+        <form id="trainingForm" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700"
+                >n_neighbors range</label
+              >
+              <div class="flex space-x-2">
+                <input
+                  type="number"
+                  name="n_neighbors_min"
+                  placeholder="Min"
+                  min="1"
+                  value="1"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
+                />
+                <input
+                  type="number"
+                  name="n_neighbors_max"
+                  placeholder="Max"
+                  min="1"
+                  value="20"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
+                />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700"
+                >p range (Manhattan/Euclidean)</label
+              >
+              <div class="flex space-x-2">
+                <input
+                  type="number"
+                  name="p_min"
+                  placeholder="Min"
+                  min="1"
+                  value="1"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
+                />
+                <input
+                  type="number"
+                  name="p_max"
+                  placeholder="Max"
+                  min="1"
+                  value="2"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
+                />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700"
+                >Number of Trials</label
+              >
+              <input
+                type="number"
+                name="n_trials"
+                min="10"
+                value="100"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700"
+                >Weights</label
+              >
+              <div class="mt-2 space-y-2">
+                <label class="inline-flex items-center">
+                  <input
+                    type="checkbox"
+                    name="weights"
+                    value="uniform"
+                    checked
+                    class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-offset-0 focus:ring-blue-200"
+                  />
+                  <span class="ml-2">Uniform</span>
+                </label>
+                <label class="inline-flex items-center">
+                  <input
+                    type="checkbox"
+                    name="weights"
+                    value="distance"
+                    checked
+                    class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-offset-0 focus:ring-blue-200"
+                  />
+                  <span class="ml-2">Distance</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+          >
+            Train with Optuna Optimization
+          </button>
+        </form>
+      </div>
+
+      <!-- Step 5: Results -->
+      <div
+        id="resultsSection"
+        class="bg-white rounded-lg shadow-md p-6 step-inactive"
+      >
+        <h2 class="text-2xl font-bold mb-4">Step 5: Model Evaluation</h2>
+        <div id="modelResults" class="space-y-4">
+          <!-- Evaluation Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="p-4 bg-blue-100 rounded-lg shadow">
+              <h3 class="text-lg font-bold">F1 Score</h3>
+              <p class="text-2xl" id="f1Score">-</p>
+            </div>
+            <div class="p-4 bg-green-100 rounded-lg shadow">
+              <h3 class="text-lg font-bold">Precision</h3>
+              <p class="text-2xl" id="precision">-</p>
+            </div>
+            <div class="p-4 bg-yellow-100 rounded-lg shadow">
+              <h3 class="text-lg font-bold">Recall</h3>
+              <p class="text-2xl" id="recall">-</p>
+            </div>
+            <div class="p-4 bg-red-100 rounded-lg shadow">
+              <h3 class="text-lg font-bold">Accuracy</h3>
+              <p class="text-2xl" id="accuracy">-</p>
+            </div>
+          </div>
+
+          <!-- Best Parameters -->
+          <div class="mt-6">
+            <h3 class="text-lg font-bold">Best Parameters</h3>
+            <ul id="bestParams" class="list-disc pl-6">
+              <!-- Best params content here -->
+            </ul>
+          </div>
+
+          <!-- Confusion Matrix -->
+          <h3 class="text-lg font-bold">Confusion Matrix</h3>
+          <img id="confusion-matrix-img" alt="Confusion Matrix" class="mx-auto">
+          
+          <h3 class="text-lg font-bold">Feature Importance</h3>
+          <img id="feature-importance-img" alt="Feature Importance" class="mx-auto">
+          
+          
+
+          <!-- Trained Dataset Table -->
+          <div class="mt-6">
+            <h3 class="text-lg font-bold">Trained Dataset</h3>
+            <div id="trainedDataTable" class="overflow-x-auto">
+              <!-- Trained dataset table content here -->
+            </div>
+          </div>
+
+          <div id="pagination" class="flex justify-center mt-4 space-x-2">
+            <button id="prevPage" class="px-4 py-2 bg-gray-200 rounded">Previous</button>
+            <button id="nextPage" class="px-4 py-2 bg-gray-200 rounded">Next</button>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+
+    <script>
+ $(document).ready(function () {
+        $("#uploadForm").on("submit", function (e) {
+          e.preventDefault();
+          const formData = new FormData(this);
+
+          $.ajax({
+            url: "/train_upload",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+              if (response.success) {
+                // Show data table
+                const table = createDataTable(response.data, response.columns);
+                $("#dataTable").html(table).removeClass("hidden");
+
+                // Show the "Proceed to Split Data" button
+                $("#processDataSplit").removeClass("hidden");
+
+                // Enable split section
+                $("#splitSection").removeClass("step-inactive");
+              }
+            },
+            error: function (xhr) {
+              alert(xhr.responseJSON?.message || "Error uploading dataset.");
+            },
+          });
+        });
+
+        $("#processDataSplit").on("click", function () {
+          // Navigate to the next step
+          $("#dataTable").addClass("hidden");
+          $("#splitSection").removeClass("step-inactive");
+        });
+
+  // Split Data
+  $("#splitForm").on("submit", function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    formData.append("split_data", true);
+
+    // Show loading state
+    $("#smoteSection").html(`
+      <h2 class="text-2xl font-bold mb-4">Step 3: Class Balance Analysis</h2>
+      <div class="flex items-center justify-center p-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    `);
+
+    $.ajax({
+      url: "/train_upload",
+      type: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function (response) {
+        if (response.success) {
+          $("#splitResults").html(`
+  <div class="bg-green-50 border-l-4 border-green-400 p-4">
+    <p class="text-green-700">Data split successfully!</p>
+  </div>
+`).removeClass("hidden");
+
+
+$("#splitResults").html(`
+  <div class="bg-green-50 border-l-4 border-green-400 p-4">
+    <p class="text-green-700">Data split successfully!</p>
+    <p>Training set: ${response.train_size} samples</p>
+    <p>Test set: ${response.test_size} samples</p>
+  </div>
+`).removeClass("hidden");
+
+
+
+          // Dynamically update SMOTE section with new chart
+          const smoteContent = `
+            <h2 class="text-2xl font-bold mb-4">Step 3: Class Balance Analysis</h2>
+            <div id="smoteResults" class="space-y-4">
+              <div class="bg-${response.needs_smote ? 'yellow' : 'green'}-50 border-l-4 border-${response.needs_smote ? 'yellow' : 'green'}-400 p-4">
+                <p class="text-${response.needs_smote ? 'yellow' : 'green'}-700">
+                  ${response.needs_smote ? 'Dataset is imbalanced. SMOTE will be applied during training.' : 'Dataset is relatively balanced. SMOTE is not required.'}
+                </p>
+              </div>
+            </div>
+            <div id="classDistributionChart" class="mt-4">
+              <img src="${response.smote_chart_url}?t=${new Date().getTime()}" alt="Class Distribution" class="mx-auto">
+            </div>
+          `;
+          $("#smoteSection")
+            .html(smoteContent)
+            .removeClass("step-inactive");
+
+          // Enable training section
+          $("#trainingSection").removeClass("step-inactive");
+        }
+      },
+      error: function (xhr) {
+        const response = xhr.responseJSON;
+        $("#splitResults")
+          .html(`
+            <div class="bg-red-50 border-l-4 border-red-400 p-4">
+              <p class="text-red-700">Error: ${
+                response?.message || "Failed to split data"
+              }</p>
+            </div>
+          `)
+          .removeClass("hidden");
+      },
+    });
+  });
+
+  // Train Model
+  $("#trainingForm").on("submit", function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    formData.append("train_model", true);
+
+    // Show loading state
+    $(this)
+      .find('button[type="submit"]')
+      .html(`
+        <span class="inline-flex items-center">
+          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Training in progress...
+        </span>
+      `)
+      .prop("disabled", true);
+
+    $.ajax({
+      url: "/train_upload",
+      type: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function (response) {
+        if (response.success) {
+          // Update evaluation metrics
+          $("#f1Score").text((response.metrics.f1 * 100).toFixed(2) + "%");
+          $("#precision").text((response.metrics.precision * 100).toFixed(2) + "%");
+          $("#recall").text((response.metrics.recall * 100).toFixed(2) + "%");
+          $("#accuracy").text((response.metrics.accuracy * 100).toFixed(2) + "%");
+
+          // Populate best parameters
+          $("#bestParams").html(
+            Object.entries(response.best_params)
+              .map(
+                ([key, value]) => `<li><strong>${key}:</strong> ${value}</li>`
+              )
+              .join("")
+          );
+
+          // Dynamically update image sources with cache-busting timestamps
+  $("#confusion-matrix-img").attr(
+    "src",
+    `/static/confusion_matrix.png?t=${new Date().getTime()}`
+  );
+
+  $("#feature-importance-img").attr(
+    "src",
+    `/static/feature_importance.png?t=${new Date().getTime()}`
+  );
+          // Enable and show results section
+          $("#resultsSection").removeClass("step-inactive");
+
+          // Reset form button
+          $('#trainingForm button[type="submit"]')
+            .html("Train with Optuna Optimization")
+            .prop("disabled", false);
+        }
+      },
+      error: function () {
+        $('#trainingForm button[type="submit"]')
+          .html("Train with Optuna Optimization")
+          .prop("disabled", false);
+        alert("An error occurred during training. Please try again.");
+      },
+    });
+  });
+
+  // Helper function to create data table
+  function createDataTable(data, columns) {
+    let table = `
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            ${columns
+              .map(
+                (col) => `
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  ${col}
+                </th>
+              `
+              )
+              .join("")}
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          ${data
+            .map(
+              (row) => `
+              <tr>
+                ${columns
+                  .map(
+                    (col) => `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      ${row[col]}
+                    </td>
+                  `
+                  )
+                  .join("")}
+              </tr>
+            `
+            )
+            .join("")}
+        </tbody>
+      </table>
+    `;
+    return table;
+  }
+
+  // Helper function to update SMOTE results
+  function updateSmoteResults(response) {
+    const needsSmote = response.needs_smote;
+    const smoteChartUrl = response.smote_chart_url || "/static/smote_distribution.png";
+    const message = needsSmote
+      ? "Dataset is imbalanced. SMOTE will be applied during training."
+      : "Dataset is relatively balanced. SMOTE is not required.";
+
+    $("#smoteResults").html(`
+      <div class="bg-${needsSmote ? "yellow" : "green"}-50 border-l-4 border-${needsSmote ? "yellow" : "green"}-400 p-4">
+        <p class="text-${needsSmote ? "yellow" : "green"}-700">${message}</p>
+      </div>
+    `);
+
+    $("#classDistributionChart").html(`
+      <img src="${smoteChartUrl}" alt="Class Distribution" class="mt-4 mx-auto">
+    `);
+  }
+
+  // Pagination for trained data
+  let currentPage = 1;
+
+  function loadTrainedDataset(page) {
+    $.ajax({
+      url: `/get_trained_data?page=${page}`,
+      type: "GET",
+      success: function (response) {
+        if (response.success) {
+          const table = createDataTable(response.data, response.columns);
+          $("#trainedDataTable").html(table);
+          $("#prevPage").prop("disabled", page === 1);
+          $("#nextPage").prop("disabled", page * response.per_page >= response.total_rows);
+          currentPage = page;
+        } else {
+          alert(response.message);
+        }
+      },
+      error: function (xhr) {
+        alert(xhr.responseJSON?.message || "Failed to load data.");
+      },
+    });
+  }
+
+  $("#prevPage").on("click", function () {
+    if (currentPage > 1) {
+      loadTrainedDataset(currentPage - 1);
+    }
+  });
+
+  $("#nextPage").on("click", function () {
+    loadTrainedDataset(currentPage + 1);
+  });
+
+  // Update results
+  function updateResults(response) {
+    $('#nTrials').text(response.n_trials);
+    loadTrainedDataset(1);
+  }
+});
+    </script>
+  </body>
+</html>
+
+{% endblock %}

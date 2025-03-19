@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Analysis Results - MedHCV{% endblock %}
+
+{% block content %}
+<div class="container mx-auto mt-10 mb-12 px-24">
+    <div class="bg-white shadow-md rounded-lg border">
+        <!-- Bagian Header -->
+        <div class="bg-blue-500 text-white rounded-t-lg p-6">
+            <h3 class="text-2xl font-semibold">Laporan Analisis Hepatitis C</h3>
+        </div>
+
+        <!-- Ringkasan Diagnosis -->
+        <div class="p-6">
+            <h4 class="text-xl font-bold text-blue-700 mb-4">Ringkasan Diagnosis</h4>
+            <div class="flex justify-between items-center">
+                <p class="text-lg text-gray-700">
+                    <strong>Diagnosis:</strong>
+                    {% if risk_score > 50 %}
+                        <span class="text-red-600 font-bold">Hepatitis C Kemungkinan Terdeteksi</span>
+                    {% else %}
+                        <span class="text-green-600 font-bold">Hepatitis C Kemungkinan Tidak Terdeteksi</span>
+                    {% endif %}
+                </p>
+                <p class="text-lg font-bold text-blue-700">
+                    Skor Risiko: {{ risk_score }}%
+                </p>
+            </div>
+            <hr class="border-gray-300 my-4">
+
+            <!-- Kontribusi SHAP -->
+            <div class="mt-6">
+                <h3 class="text-lg font-bold">Fitur Paling Berpengaruh (SHAP)</h3>
+                <p class="text-gray-700 mb-4">Diagram ini menunjukkan 6 fitur yang paling memengaruhi hasil prediksi.</p>
+                <img src="data:image/png;base64,{{ shap_plot_base64 }}" alt="Diagram SHAP" class="mx-auto shadow-lg rounded-lg">
+            </div>
+            
+            <!-- Nilai Fitur -->
+            <h4 class="text-xl font-bold text-blue-700 mt-6 mb-4">Nilai Fitur</h4>
+            <ul class="list-group">
+                {% for key, value in feature_values.items() %}
+                <li class="list-group-item">
+                    <span class="font-semibold">{{ key }}:</span> {{ value }}
+                </li>
+                {% endfor %}
+            </ul>
+
+            <hr class="border-gray-300 my-4">
+
+            <!-- Rekomendasi Klinis -->
+            <h4 class="text-xl font-bold text-blue-700 mb-4">Rekomendasi Klinis</h4>
+            <ul class="list-disc list-inside text-gray-700">
+                {% if risk_score > 50 %}
+                <li>Merekomendasikan tes diagnostik lanjutan seperti PCR atau tes fungsi hati.</li>
+                <li>Konsultasi dengan spesialis hepatologi untuk penilaian lebih lanjut.</li>
+                <li>Pertimbangkan riwayat pasien terkait konsumsi alkohol atau penggunaan obat-obatan.</li>
+                {% else %}
+                <li>Tidak diperlukan pengujian lebih lanjut saat ini, tetapi pemeriksaan rutin dianjurkan.</li>
+                <li>Jaga gaya hidup sehat dan hindari faktor risiko penyakit hati.</li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <!-- Bagian Footer -->
+        <div class="p-6 bg-gray-50 rounded-b-lg text-center">
+            <a href="/" class="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition">
+                Kembali ke Halaman Utama
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

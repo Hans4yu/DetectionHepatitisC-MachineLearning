@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm w-full fixed top-0 left-0 z-10">
+        <div class="container mx-auto flex items-center justify-between py-4 px-4">
+            <a href="/" class="text-2xl font-bold text-gray-800 hover:text-blue-600">
+                MedHCV<span class="text-blue-500">+</span>
+            </a>
+            <button class="lg:hidden focus:outline-none text-gray-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="flex max-w-5xl w-full items-center space-x-8 mt-20">
+        <!-- Login Form -->
+        <div class="bg-white shadow-md rounded-lg p-8 border border-gray-300 max-w-md w-full">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-4">Agent Login</h2>
+            <p class="text-gray-500 text-center mb-6">Hey, Enter your details to sign in to your account</p>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="space-y-2">
+                {% for category, message in messages %}
+                <div class="p-2 rounded-md text-white {{ 'bg-green-500' if category == 'success' else 'bg-red-500' }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <!-- Form -->
+            <form method="POST" class="space-y-6">
+                <!-- Username -->
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                    <input type="text" name="username" id="username" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:outline-none" required>
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <div class="relative mt-1">
+                        <input type="password" name="password" id="password" class="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:outline-none" required>
+                        <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 flex items-center px-4">
+                            <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <a href="/register" class="text-sm font-medium text-blue-600 hover:text-blue-700 transition duration-150 ease-in-out">
+                        Don't have an account? Register here
+                    </a>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="w-full py-3 bg-blue-500 text-white rounded-md text-lg transition hover:bg-blue-400">Sign in</button>
+            </form>
+        </div>
+
+        <!-- Image Illustration -->
+        <div class="hidden md:block w-1/2">
+            <img src="{{ url_for('static', filename='login.svg') }}" alt="Login Illustration" class="w-full h-auto">
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("togglePassword").addEventListener("click", function () {
+            const passwordInput = document.getElementById("password");
+            const eyeIcon = document.getElementById("eyeIcon");
+            const isPassword = passwordInput.type === "password";
+
+            passwordInput.type = isPassword ? "text" : "password";
+
+            // Update the icon
+            eyeIcon.innerHTML = isPassword
+                ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.98 8.52a10.42 10.42 0 0116.04 0m.56 7.15a10.42 10.42 0 01-17.16 0M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.93 4.93l14.14 14.14" />`
+                : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`;
+        });
+    </script>
+</body>
+
+</html>

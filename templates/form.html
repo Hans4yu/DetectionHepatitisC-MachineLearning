@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction Form - MedHCV{% endblock %}
+
+{% block content %}
+<div class="container mx-auto mt-10 mb-10 px-4">
+    <div class="bg-white shadow-lg rounded-lg">
+        <div class="bg-blue-600 text-white p-4 rounded-t-lg">
+            <h3 class="text-xl font-bold">Form Pendeteksi Hepatitis C</h3>
+        </div>
+        <div class="p-6">
+            <form action="/form" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Age -->
+                <div>
+                    <label for="age" class="block text-sm font-medium text-gray-700">Age</label>
+                    <input type="number" name="age" id="age" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm p-2" required>
+                </div>
+
+                <!-- Sex -->
+                <div>
+                    <label for="sex" class="block text-sm font-medium text-gray-700">Sex</label>
+                    <select name="sex" id="sex" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm p-2" required>
+                        <option value="1">Male</option>
+                        <option value="0">Female</option>
+                    </select>
+                </div>
+
+                <!-- Albumin -->
+                <div>
+                    <label for="alb" class="block text-sm font-medium text-gray-700">Albumin (ALB)</label>
+                    <input type="number" name="alb" id="alb" step="0.1" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm p-2" required>
+                </div>
+
+                <!-- Alkaline Phosphatase -->
+                <div>
+                    <label for="alp" class="block text-sm font-medium text-gray-700">Alkaline Phosphatase (ALP)</label>
+                    <input type="number" name="alp" id="alp" step="0.1" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm p-2" required>
+                </div>
+
+                <!-- Alanine Aminotransferase -->
+                <div>
+                    <label for="alt" class="block text-sm font-medium text-gray-700">Alanine Aminotransferase (ALT)</label>
+                    <input type="number" name="alt" id="alt" step="0.1" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm p-2" required>
+                </div>
+
+                <!-- Aspartate Aminotransferase -->
+                <div>
+                    <label for="ast" class="block text-sm font-medium text-gray-700">Aspartate Aminotransferase (AST)</label>
+                    <input type="number" name="ast" id="ast" step="0.1" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm p-2" required>
+                </div>
+
+                <!-- Bilirubin -->
+                <div>
+                    <label for="bil" class="block text-sm font-medium text-gray-700">Bilirubin (BIL)</label>
+                    <input type="number" name="bil" id="bil" step="0.1" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm p-2" required>
+                </div>
+
+                <!-- Cholinesterase -->
+                <div>
+                    <label for="che" class="block text-sm font-medium text-gray-700">Cholinesterase (CHE)</label>
+                    <input type="number" name="che" id="che" step="0.1" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm p-2" required>
+                </div>
+
+                <!-- Cholesterol -->
+                <div>
+                    <label for="chol" class="block text-sm font-medium text-gray-700">Cholesterol (CHOL)</label>
+                    <input type="number" name="chol" id="chol" step="0.1" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm p-2" required>
+                </div>
+
+                <!-- Creatinine -->
+                <div>
+                    <label for="crea" class="block text-sm font-medium text-gray-700">Creatinine (CREA)</label>
+                    <input type="number" name="crea" id="crea" step="0.1" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm p-2" required>
+                </div>
+
+                <!-- Gamma-Glutamyltransferase -->
+                <div>
+                    <label for="ggt" class="block text-sm font-medium text-gray-700">Gamma-Glutamyltransferase (GGT)</label>
+                    <input type="number" name="ggt" id="ggt" step="0.1" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm p-2" required>
+                </div>
+
+                <!-- Total Protein -->
+                <div>
+                    <label for="prot" class="block text-sm font-medium text-gray-700">Total Protein (PROT)</label>
+                    <input type="number" name="prot" id="prot" step="0.1" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm p-2" required>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="col-span-1 md:col-span-2">
+                    <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700">Mulai Deteksi</button>
+                </div>
+            </form>
+        </div>
+
+        
+    </div>
+</div>
+{% endblock %}

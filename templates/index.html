@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Home - MedHCV{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gray-100 py-16">
+    <div class="container mx-auto flex flex-col md:flex-row items-center justify-between px-6 md:px-12">
+        <div class="md:w-1/2 text-left">
+            <h1 class="text-5xl font-extrabold text-gray-800 leading-tight mb-6">
+                Solusi Jitu untuk Spesialis Hepatitis C
+            </h1>
+            <p class="text-lg text-gray-600 mb-8">
+                Platform kami dirancang untuk membantu dokter dan spesialis dalam mendeteksi Hepatitis C 
+                dengan cepat dan akurat. Dapatkan alat analisis medis terpercaya untuk mendukung diagnosis Anda.
+            </p>
+            <a href="{{ url_for('form') }}" class="bg-blue-600 text-white py-4 px-8 rounded-lg text-lg font-semibold hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 flex items-center space-x-2">
+                <span>Deteksi Sekarang!</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </a>
+            <div class="flex items-center space-x-4 mt-4 text-blue-600">
+                <div class="flex items-center space-x-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M12 21V10m-3-6h6" />
+                    </svg>
+                    <span>Integrasi Cepat</span>
+                </div>
+                <div class="flex items-center space-x-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 0V4m0 16v-4m0-4h-4m4 0h4" />
+                    </svg>
+                    <span>Akurasi Tinggi</span>
+                </div>
+                <div class="flex items-center space-x-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5v14" />
+                    </svg>
+                    <span>Hasil Cepat</span>
+                </div>
+            </div>
+        </div>
+        <div class="md:w-1/2 mt-10 md:mt-0 text-center">
+            <img src="{{ url_for('static', filename='doctors-animate.svg') }}" alt="Doctors Illustration" class="w-full max-w-lg mx-auto rounded-lg shadow-lg">
+        </div>
+    </div>
+</section>
+
+<!-- Info Section -->
+<section class="bg-blue-600 text-white py-16">
+    <div class="container mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+        <div class="bg-white text-blue-600 p-6 rounded-lg shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-12 h-12 mx-auto mb-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 2l3 6h6l-5 4 2 7-6-4-6 4 2-7-5-4h6l3-6z" />
+            </svg>
+            <h5 class="text-xl font-bold">Akurasi Diagnosa</h5>
+            <p class="mt-4 text-base">Sistem yang dirancang untuk memberikan diagnosa Hepatitis C dengan akurasi lebih dari 95%.</p>
+        </div>
+        <div class="bg-white text-blue-600 p-6 rounded-lg shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-12 h-12 mx-auto mb-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 17l6-6-6-6" />
+            </svg>
+            <h5 class="text-xl font-bold">Hemat Waktu</h5>
+            <p class="mt-4 text-base">Hasil analisis tersedia dalam hitungan menit untuk mendukung keputusan cepat dokter.</p>
+        </div>
+        <div class="bg-white text-blue-600 p-6 rounded-lg shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-12 h-12 mx-auto mb-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5v14" />
+            </svg>
+            <h5 class="text-xl font-bold">Mudah Digunakan</h5>
+            <p class="mt-4 text-base">Antarmuka yang sederhana dan mudah digunakan untuk mendukung tugas dokter.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
